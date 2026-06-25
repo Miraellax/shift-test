@@ -44,7 +44,7 @@ async def get_reservation_info(reservation_id:int,
     if reservation is None or (not current_user.is_admin and reservation.user_id != current_user.id):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Бронирование не найдено")
 
-    # Создание ответа с дополнительной информацией о Слоте для просмотра Бронирования TODO add relationship
+    # Создание ответа с дополнительной информацией о Слоте для просмотра Бронирования
     slot_info = await slots_repo.get_slot_info(reservation.slot_id)
     if slot_info is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Слот не найден")

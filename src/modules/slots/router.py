@@ -61,8 +61,6 @@ async def post_slot(slot: slots_schema.SlotCreate,
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                         detail="Комната не найдена")
 
-    # Проверка, что создаваемый слот не накладывается на существующие в комнате TODO
-
     result = await slots_repo.post_slot(slot)
 
     return slots_schema.Slot.model_validate(result)

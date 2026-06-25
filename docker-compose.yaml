@@ -1,0 +1,80 @@
+services:
+  server:
+    build:
+      context: .
+      dockerfile: dockerfile
+    ports:
+      - 443:443
+      - 80:80
+    depends_on:
+      postgres:
+        condition: service_healthy
+      postgres-test:
+        condition: service_healthy
+    environment:
+      - POSTGRES_USER=shift-test
+      - POSTGRES_PASSWORD=123
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_NAME=shift-test
+      - DB_MODE=postgres
+    networks:
+      - shift-test
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: shift-test
+      POSTGRES_USER: shift-test
+      POSTGRES_PASSWORD: 123
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    ports:
+      - 5000:5432
+    volumes:
+      - ./alembic/db_migrations:/docker-entrypoint-initdb.d
+      - shift-test-postgres-db:/var/lib/postgresql/data
+    healthcheck:
+      test: pg_isready -U shift-test -d shift-test
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 4G
+    networks:
+      - shift-test
+
+  postgres-test:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: shift-test-test
+      POSTGRES_USER: shift-test-test
+      POSTGRES_PASSWORD: 123
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    ports:
+      - 5433:5432
+    healthcheck:
+      test: pg_isready -U shift-test-test -d shift-test-test
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 4G
+    networks:
+      - shift-test
+
+volumes:
+  shift-test-postgres-db:
+
+networks:
+  shift-test:
+    driver: bridge

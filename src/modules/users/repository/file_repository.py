@@ -2,7 +2,7 @@ import json
 from typing import Sequence
 
 from .schema import User as UserSchema, UserCreate as UserCreateSchema
-from modules.reservations.repository.schema import Reservation as ReservationSchema
+from ...reservations.repository.schema import Reservation as ReservationSchema
 from .base_repository import BaseUsersRepository
 
 

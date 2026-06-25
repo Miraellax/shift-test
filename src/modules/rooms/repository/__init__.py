@@ -20,10 +20,10 @@ def get_file_rooms_repository(path = os.getenv("FILE_DB_PATH")):
 
 async def get_rooms_repository() -> BaseRoomsRepository:
     mode = os.getenv("DB_MODE")
-    if mode == "file":
+    if mode == "postgres":
         async with get_sqlalchemy_rooms_repository() as repository:
             yield repository
-    elif mode == "postgres":
+    elif mode == "file":
         yield get_file_rooms_repository()
     else:
         raise Exception(f"Режим {mode} не поддерживается")

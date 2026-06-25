@@ -20,10 +20,10 @@ def get_file_reservations_repository(path = os.getenv("FILE_DB_PATH")):
 
 async def get_reservations_repository() -> BaseReservationsRepository:
     mode = os.getenv("DB_MODE")
-    if mode == "file":
+    if mode == "postgres":
         async with get_sqlalchemy_reservations_repository() as repository:
             yield repository
-    elif mode == "postgres":
+    elif mode == "file":
         yield get_file_reservations_repository()
     else:
         raise Exception(f"Режим {mode} не поддерживается")
